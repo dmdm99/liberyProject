@@ -1,6 +1,6 @@
 import sqlite3
 
-connect_db = sqlite3.connect("libery_DB_sqlite.db")
+connect_db = sqlite3.connect("app/libery_DB_sqlite.db")
 cursor = connect_db.cursor()
 
 
