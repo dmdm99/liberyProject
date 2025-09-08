@@ -56,8 +56,13 @@ cursor.execute('''
 cursor.execute('''
  CREATE TABLE IF NOT EXISTS borrowed_book(
    Exist_Books_id INTEGER NOT NULL,
-   id_book INTEGER NOT NULL,
+   id_user INTEGER NOT NULL,
    Date_to_take DATE NOT NULL,
-   PRIMARY KEY(Exist_Books_id, id_book)
+   FOREIGN KEY (id_user) REFERENCES users(user_id),
+   FOREIGN KEY (Exist_Books_id) REFERENCES Exist_Books(Exist_Books_id),
+   PRIMARY KEY(Exist_Books_id, id_user)
    )
 ''')
+
+connect_db.commit()
+connect_db.close()

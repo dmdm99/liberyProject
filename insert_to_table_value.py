@@ -30,7 +30,7 @@ VALUES (1, 'USER')
 
 # insert example into borrowed_book
 cursor.execute('''
-INSERT INTO borrowed_book (Exist_Books_id, id_book, Date_to_take)
+INSERT INTO borrowed_book (Exist_Books_id, id_user, Date_to_take)
 VALUES (1, 1, '2025-09-07')
 ''')
 
