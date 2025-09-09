@@ -10,11 +10,8 @@ class samting_in_libery(ABC):
         self.datePublication = datePublication
         self.status = status
 
-    def get_samting_in_libery(self):
-        return self.title, self.author, self.datePublication, self.status
-
-    def get_samting_in_libery(self):
-        return self.title, self.author, self.datePublication, self.status
+    def get_all_about_object_in_libery(self):
+        return self.__dict__
 
     def get_id(self):
         return self.id
@@ -30,9 +27,6 @@ class samting_in_libery(ABC):
 
     def get_status(self):
         return self.status
-
-    def set_samting_in_libery(self, samting_in_libery):
-        self.title = samting_in_libery.get_title()
 
     def set_id(self, id:int):
         self.id = id
