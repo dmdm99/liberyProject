@@ -44,7 +44,7 @@ def delete_users(user_id):
     connect_db.close()
 
 
-# CANGE
+# CHANGE
 #change permission
 def permission(user_id, permission_change):
    connect_db = get_connection()
@@ -63,13 +63,24 @@ def chenge_borrow(Exist_Books_id,new_date):
    connect_db.close()
 
 #FINND SAMTING
-#get user spechific
-def get_user(user_id):
+#get user spechific id
+def get_user_id(user_id):
    connect_db = get_connection()
    cursor = connect_db.cursor()
-   cursor.execute('''SELECT * FROM users 
+   cursor.execute('''SELECT users.*, User_permission.permission
                   LEFT JOIN User_permission ON users.user_id = User_permission.user_id 
                   WHERE users.user_id = ?''', (user_id,))
+   result = cursor.fetchall()
+   connect_db.close()
+   return result
+
+#get user spechific password
+def get_user_password(Password):
+   connect_db = get_connection()
+   cursor = connect_db.cursor()
+   cursor.execute('''SELECT users.* ,User_permission.permission FROM users 
+                  LEFT JOIN User_permission ON users.user_id = User_permission.user_id 
+                  WHERE users.Password = ?''', (Password,))
    result = cursor.fetchall()
    connect_db.close()
    return result
@@ -85,14 +96,25 @@ def get_all_users():
     return result
 
 #get spsific book free
-def book_free(catalog_id):
+def book_free(catalog_id="", title="", author="", publishing_year="", category=""):
     connect_db = get_connection()
     cursor = connect_db.cursor()
-    cursor.execute('''SELECT * FROM Exist_Books WHERE catalog_id = ? 
-                   AND Exist_Books_id NOT IN ( SELECT Exist_Books_id FROM borrowed_book)
-                   ''', (catalog_id,))
+    cursor.execute('''SELECT catalog_libery.*, Exist_Books.Exist_Books_id FROM catalog_libery 
+                   JOIN Exist_Books ON catalog_libery.catalog_id = Exist_Books.id_catalog
+                   WHERE (catalog_libery.catalog_id = ? OR ? = '')
+                   AND (catalog_libery.title = ? OR ? = '')
+                   AND (catalog_libery.author = ? OR ? = '')
+                   AND (catalog_libery.publishing_year = ? OR ? = '')
+                   AND (catalog_libery.category = ? OR ? = '') 
+                   AND Exist_Books.Exist_Books_id NOT IN ( SELECT Exist_Books_id FROM borrowed_book)
+                   ''', (catalog_id, catalog_id,
+                                    title, title,
+                                    author, author,
+                                    publishing_year, publishing_year,
+                                    category, category,))
     result = cursor.fetchall()
     return result
+
 
 #get book borrowed by user spsific
 def user_borrowed(user_id):

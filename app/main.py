@@ -1,16 +1,45 @@
-# This is a sample Python script.
+import os
+from fastapi import FastAPI
+import factory_libery_book
+import token
+from app.ask_sql import permission
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = FastAPI(title="Libery API", version="1.0.0")
+
+#1
+@app.post("/auth/login")
+def login(user_id: int, password: str):
+     permission_login = factory_libery_book.login_check(user_id,password)
+     token_login = token.create_token(user_id,permission_login)
+     return #need to insert to cookies
+#2
+@app.get(" /items")
+
+#3
+@app.put(" /items/{id}")
+
+#4
+@app.post("/loans")
+
+#5
+@app.patch("/loans/{id}")
+
+#6
+@app.post("/users")
+
+#7
+@app.get("/users")
+
+#8
+@app.get("/users/{id}")
+
+#9
+@app.patch("/users/{id}")
+
+#10
+@app.delete("/users/{id}")
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", "8080")))
