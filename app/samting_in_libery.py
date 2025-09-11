@@ -3,7 +3,7 @@ from datetime import date
 
 class samting_in_libery(ABC):
     @abstractmethod
-    def __init__(self, id:int, title:str, author:str, datePublication:date, status:bool):
+    def __init__(self, id:int, title:str, author:str, datePublication:date, status:bool, type:str):
         self.id = id
         self.title = title
         self.author = author

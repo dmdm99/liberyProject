@@ -26,6 +26,7 @@ cursor.execute('''
  CREATE TABLE IF NOT EXISTS Exist_Books(
   Exist_Books_id INTEGER PRIMARY KEY AUTOINCREMENT,
   id_catalog INTEGER NOT NULL,
+  type TEXT CHECK(type IN ('book','ebook', 'magazine')),
   FOREIGN KEY(id_catalog) REFERENCES catalog_libery(id)
   )
 ''')

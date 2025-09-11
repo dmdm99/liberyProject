@@ -12,8 +12,8 @@ VALUES ('My Book', 'John Doe', '2025-01-01', 'Fantasy')
 
 # insert example into Exist_Books
 cursor.execute('''
-INSERT INTO Exist_Books (id_catalog)
-VALUES (1)
+INSERT INTO Exist_Books (Exist_Books_id, id_catalog, type)
+VALUES (1,1,'book')
 ''')
 
 # insert example into users

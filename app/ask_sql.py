@@ -100,12 +100,13 @@ def book_free(catalog_id="", title="", author="", publishing_year="", category="
     connect_db = get_connection()
     cursor = connect_db.cursor()
     cursor.execute('''SELECT catalog_libery.*, Exist_Books.Exist_Books_id FROM catalog_libery 
-                   JOIN Exist_Books ON catalog_libery.catalog_id = Exist_Books.id_catalog
+                   INNER JOIN Exist_Books ON catalog_libery.catalog_id = Exist_Books.id_catalog
                    WHERE (catalog_libery.catalog_id = ? OR ? = '')
                    AND (catalog_libery.title = ? OR ? = '')
                    AND (catalog_libery.author = ? OR ? = '')
                    AND (catalog_libery.publishing_year = ? OR ? = '')
                    AND (catalog_libery.category = ? OR ? = '') 
+                   AND (Exist_Books.type = ? OR ? = '')
                    AND Exist_Books.Exist_Books_id NOT IN ( SELECT Exist_Books_id FROM borrowed_book)
                    ''', (catalog_id, catalog_id,
                                     title, title,
