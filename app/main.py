@@ -15,11 +15,12 @@ def login(response: Response, user_id: int, password: str):
      response.set_cookie(key="token_login", value=f"Bearer {token_login}", httponly=True, samesite="Lax")
      return {"message": "Login successful"}
 
-#find book spsific
+#find book specific
 @app.get("/items")
 def items(request: Request, catalog_id: int, title: str, author: str, publishing_year: date, category: str, type_of_this: str):
     thing_in_token.verify_token(request)
-    return ask_sql.book_free(catalog_id, title, author, publishing_year, category, type_of_this)
+    result = ask_sql.book_free(catalog_id, title, author, publishing_year, category, type_of_this)
+    return result
 
 #Extending the borrow
 @app.put("/items/{id}")
@@ -27,17 +28,21 @@ def change_date(id: int,request: Request):
     current_user = thing_in_token.verify_token(request)
     if current_user["permissions"] != 'ADMIN':
         raise HTTPException(status_code=401, detail="Bad permission")
-    if ask_sql.get_type(id) != 'book' or ask_sql.get_type(id) != 'magazine':
+    result = ask_sql.get_type(id)
+    if result == 'ebook':
         raise HTTPException(status_code=401, detail="Bad options")
     ask_sql.chenge_borrow(id,date.today())
+    return {"message": "successful"}
 
 #create a new borrow
 @app.post("/loans")
 def new_borrowed_book(request: Request, user_id: int, Exist_Books_id: int):
     thing_in_token.verify_token(request)
-    if ask_sql.get_type(id) != 'ebook':
+    if ask_sql.get_type(Exist_Books_id) == 'ebook':
         raise HTTPException(status_code=401, detail="Bad options")
     ask_sql.new_borrow(Exist_Books_id, user_id, date.today())
+    return {"message": "successful"}
+
 
 #delete borrow
 @app.patch("/loans/{id}")
@@ -47,6 +52,7 @@ def delete_borrow(id: int,request: Request, Exist_Books_id: int):
         if current_user["permissions"] != 'ADMIN':
             raise HTTPException(status_code=401, detail="Bad permission")
     ask_sql.delete_borrow(id, Exist_Books_id)
+    return {"message": "successful"}
 
 #create a new user
 @app.post("/users")
@@ -75,8 +81,6 @@ def spesific_user(id: int,request: Request):
     user_g = ask_sql.get_user_id(idd)
     return user_g
 
-
-
 #change permission to the user
 @app.patch("/users/{id}")
 def change_permission(id: int,request: Request, permission: str):
@@ -84,14 +88,16 @@ def change_permission(id: int,request: Request, permission: str):
     if current_user["permissions"] != 'ADMIN':
         raise HTTPException(status_code=401, detail="Bad permission")
     ask_sql.permission(id, permission)
+    return {"message": "successful"}
 
-#10
+#delete specific user
 @app.delete("/users/{id}")
 def delete_user(id: int,request: Request):
     current_user = thing_in_token.verify_token(request)
     if current_user["permissions"] != 'ADMIN':
         raise HTTPException(status_code=401, detail="Bad permission")
     ask_sql.delete_users(id)
+    return {"message": "successful"}
 
 
 if __name__ == "__main__":

@@ -14,11 +14,11 @@ def add_user(first_name, last_name, addres, emaill, phone, password, permission)
                   )
    user_id = cursor.lastrowid
    cursor.execute('''INSERT INTO User_permission (user_id, permission) 
-                      VALUES (?,?)''', (cursor.lastrowid, permission,)
+                      VALUES (?,?)''', (user_id, permission,)
                   )
    connect_db.commit()
    connect_db.close()
-   return user_id[0]
+   return user_id
 
 #add new borrow
 def new_borrow(Exist_Books_id, user_id, date):
@@ -26,7 +26,8 @@ def new_borrow(Exist_Books_id, user_id, date):
    cursor = connect_db.cursor()
    cursor.execute('''INSERT INTO borrowed_book (Exist_Books_id, id_user, Date_to_take) 
                   VALUES (?,?,?)''', (Exist_Books_id, user_id, date,))
-
+   connect_db.commit()
+   connect_db.close()
 
 #  DELETE
 #delete borrow
@@ -51,7 +52,7 @@ def delete_users(user_id):
 def permission(user_id, permission_change):
    connect_db = get_connection()
    cursor = connect_db.cursor()
-   cursor.execute('''UPDATE users SET permission = ? WHERE user_id = ?''', (permission_change, user_id,))
+   cursor.execute('''UPDATE User_permission SET permission = ? WHERE user_id = ?''', (permission_change, user_id,))
    connect_db.commit()
    connect_db.close()
 
@@ -69,9 +70,9 @@ def chenge_borrow(Exist_Books_id,new_date):
 def get_user_id(user_id):
    connect_db = get_connection()
    cursor = connect_db.cursor()
-   cursor.execute('''SELECT users.*, User_permission.permission
-                  INNER JOIN User_permission ON users.user_id = User_permission.user_id 
-                  WHERE users.user_id = ?''', (user_id,))
+   cursor.execute('''SELECT users.* ,User_permission.permission FROM users 
+                    INNER JOIN User_permission ON users.user_id = User_permission.user_id 
+                    WHERE users.user_id = ?''', (user_id,))
    result = cursor.fetchall()
    connect_db.close()
    return result
@@ -101,7 +102,7 @@ def get_all_users():
 def book_free(catalog_id=None, title="", author="", publishing_year="", category="", type_of_this=""):
     connect_db = get_connection()
     cursor = connect_db.cursor()
-    cursor.execute('''SELECT catalog_libery.*, Exist_Books.Exist_Books_id FROM catalog_libery 
+    cursor.execute('''SELECT catalog_libery.*, Exist_Books.Exist_Books_id, Exist_Books.type FROM catalog_libery 
                    LEFT JOIN Exist_Books ON catalog_libery.catalog_id = Exist_Books.id_catalog
                    WHERE (catalog_libery.catalog_id = ? )
                    AND (catalog_libery.title = ? OR ? = '')
@@ -117,6 +118,7 @@ def book_free(catalog_id=None, title="", author="", publishing_year="", category
                          category, category,
                          type_of_this, type_of_this, ))
     result = cursor.fetchall()
+    connect_db.close()
     return result
 
 #get book borrowed by user spesific
@@ -125,26 +127,19 @@ def user_borrowed(user_id):
     cursor = connect_db.cursor()
     cursor.execute('''SELECT * FROM borrowed_book where id_user = ?''', (user_id,))
     result = cursor.fetchall()
+    connect_db.close()
     return result
 
 #get type from id
 def get_type(Exist_Books_id):
     connect_db = get_connection()
     cursor = connect_db.cursor()
-    cursor.execute('''SELECT type FROM borrowed_book where Exist_Books_id = ?''', (Exist_Books_id,))
+    cursor.execute('''SELECT Exist_Books.TYPE
+                   FROM borrowed_book INNER JOIN Exist_Books
+                   ON borrowed_book.Exist_Books_id = Exist_Books.Exist_Books_id 
+                   WHERE Exist_Books.Exist_Books_id = ?''', (Exist_Books_id,))
     result = cursor.fetchall()
+    connect_db.close()
     return result
 
 
-
-def book_freet(s):
-    connect_db = get_connection()
-    cursor = connect_db.cursor()
-    cursor.execute(''' SELECT * FROM catalog_libery 
-        INNER JOIN Exist_Books ON catalog_libery.catalog_id = Exist_Books.id_catalog
-        WHERE catalog_libery.catalog_id = ?
-    ''', (s,))
-
-
-    result = cursor.fetchall()
-    return result
