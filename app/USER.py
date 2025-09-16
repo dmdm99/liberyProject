@@ -4,13 +4,14 @@
 class USER(object):
 
 # create a new object
-    def __init__(self, First_Name:str, Last_Name:str, address:str, email:str, Phone_Number:str, Password:str != None):
+    def __init__(self, First_Name:str, Last_Name:str, address:str, email:str, Phone_Number:str, Password:str != None, permision: str):
         self.First_Name = First_Name
         self.Last_Name = Last_Name
         self.address = address
         self.email = email
         self.Phone_Number = Phone_Number
         self.Password = Password
+        self.permision = permision
 
     def get_user_info(self):
         return self.__init__()

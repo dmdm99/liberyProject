@@ -12,11 +12,13 @@ def add_user(first_name, last_name, addres, emaill, phone, password, permission)
    cursor.execute('''INSERT INTO USERS (First_Name, Last_Name, Adress, Email, Phone, Password) 
                    VALUES (?,?,?,?,?,?)''', (first_name, last_name, addres, emaill, phone, password,)
                   )
+   user_id = cursor.lastrowid
    cursor.execute('''INSERT INTO User_permission (user_id, permission) 
                       VALUES (?,?)''', (cursor.lastrowid, permission,)
                   )
    connect_db.commit()
    connect_db.close()
+   return user_id[0]
 
 #add new borrow
 def new_borrow(Exist_Books_id, user_id, date):
@@ -63,12 +65,12 @@ def chenge_borrow(Exist_Books_id,new_date):
    connect_db.close()
 
 #FINND SAMTING
-#get user spechific id
+#get user spechific from id
 def get_user_id(user_id):
    connect_db = get_connection()
    cursor = connect_db.cursor()
    cursor.execute('''SELECT users.*, User_permission.permission
-                  LEFT JOIN User_permission ON users.user_id = User_permission.user_id 
+                  INNER JOIN User_permission ON users.user_id = User_permission.user_id 
                   WHERE users.user_id = ?''', (user_id,))
    result = cursor.fetchall()
    connect_db.close()
@@ -79,8 +81,8 @@ def get_user_password(Password):
    connect_db = get_connection()
    cursor = connect_db.cursor()
    cursor.execute('''SELECT users.* ,User_permission.permission FROM users 
-                  LEFT JOIN User_permission ON users.user_id = User_permission.user_id 
-                  WHERE users.Password = ?''', (Password,))
+                    INNER JOIN User_permission ON users.user_id = User_permission.user_id 
+                    WHERE users.Password = ?''', (Password,))
    result = cursor.fetchall()
    connect_db.close()
    return result
@@ -89,35 +91,35 @@ def get_user_password(Password):
 def get_all_users():
     connect_db = get_connection()
     cursor = connect_db.cursor()
-    cursor.execute('''SELECT * FROM users 
-        LEFT JOIN User_permission ON users.user_id = User_permission.user_id ''')
+    cursor.execute('''SELECT users.user_id, users.First_Name, users.Last_Name, users.Adress, users.Email, users.Phone, users.Password, User_permission.permission FROM users 
+                   INNER JOIN User_permission ON users.user_id = User_permission.user_id ''')
     result = cursor.fetchall()
     connect_db.close()
     return result
 
-#get spsific book free
-def book_free(catalog_id="", title="", author="", publishing_year="", category=""):
+#get spesific book free
+def book_free(catalog_id=None, title="", author="", publishing_year="", category="", type_of_this=""):
     connect_db = get_connection()
     cursor = connect_db.cursor()
     cursor.execute('''SELECT catalog_libery.*, Exist_Books.Exist_Books_id FROM catalog_libery 
-                   INNER JOIN Exist_Books ON catalog_libery.catalog_id = Exist_Books.id_catalog
-                   WHERE (catalog_libery.catalog_id = ? OR ? = '')
+                   LEFT JOIN Exist_Books ON catalog_libery.catalog_id = Exist_Books.id_catalog
+                   WHERE (catalog_libery.catalog_id = ? )
                    AND (catalog_libery.title = ? OR ? = '')
                    AND (catalog_libery.author = ? OR ? = '')
                    AND (catalog_libery.publishing_year = ? OR ? = '')
                    AND (catalog_libery.category = ? OR ? = '') 
                    AND (Exist_Books.type = ? OR ? = '')
                    AND Exist_Books.Exist_Books_id NOT IN ( SELECT Exist_Books_id FROM borrowed_book)
-                   ''', (catalog_id, catalog_id,
-                                    title, title,
-                                    author, author,
-                                    publishing_year, publishing_year,
-                                    category, category,))
+                   ''', (catalog_id,
+                         title, title,
+                         author, author,
+                         publishing_year, publishing_year,
+                         category, category,
+                         type_of_this, type_of_this, ))
     result = cursor.fetchall()
     return result
 
-
-#get book borrowed by user spsific
+#get book borrowed by user spesific
 def user_borrowed(user_id):
     connect_db = get_connection()
     cursor = connect_db.cursor()
@@ -125,7 +127,24 @@ def user_borrowed(user_id):
     result = cursor.fetchall()
     return result
 
+#get type from id
+def get_type(Exist_Books_id):
+    connect_db = get_connection()
+    cursor = connect_db.cursor()
+    cursor.execute('''SELECT type FROM borrowed_book where Exist_Books_id = ?''', (Exist_Books_id,))
+    result = cursor.fetchall()
+    return result
 
 
 
+def book_freet(s):
+    connect_db = get_connection()
+    cursor = connect_db.cursor()
+    cursor.execute(''' SELECT * FROM catalog_libery 
+        INNER JOIN Exist_Books ON catalog_libery.catalog_id = Exist_Books.id_catalog
+        WHERE catalog_libery.catalog_id = ?
+    ''', (s,))
 
+
+    result = cursor.fetchall()
+    return result
