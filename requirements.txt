@@ -1,3 +1,3 @@
 uvicorn
 fastapi
-jose
+python-jose[cryptography]
