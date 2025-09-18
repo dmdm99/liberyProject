@@ -48,11 +48,16 @@ def new_borrowed_book(request: Request, user_id: int, Exist_Books_id: int):
 @app.patch("/loans/{id}")
 def delete_borrow(id: int,request: Request, Exist_Books_id: int):
     current_user = thing_in_token.verify_token(request)
+#    if thing_libery_book.time_left(Exist_Books_id, id) == 'penalty':
+#        return {"message": "nut deleted you need to pay"}
     if ask_sql.get_type(Exist_Books_id) != 'ebook':
         if current_user["permissions"] != 'ADMIN':
             raise HTTPException(status_code=401, detail="Bad permission")
     ask_sql.delete_borrow(id, Exist_Books_id)
     return {"message": "successful"}
+
+#its is pay
+
 
 #create a new user
 @app.post("/users")

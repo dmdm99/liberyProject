@@ -3,19 +3,19 @@ class rule(object):
     Ebook_time = 14
     Magazine_time = 7
 
-    def __init__(self, book_time, Ebook_time, Magazine_time):
-        self.book_time = book_time
-        self.Ebook_time = Ebook_time
-        self.Magazine_time = Magazine_time
+    def __init__(self):
+        self.book_time = self.Ebook_time
+        self.Ebook_time = self.Magazine_time
+        self.Magazine_time = self.book_time
 
     def get_book_time(self):
-        return self.book_time
+        return int(self.book_time)
 
     def get_Ebook_time(self):
-        return self.Ebook_time
+        return int(self.Ebook_time)
 
     def get_Magazine_time(self):
-        return self.Magazine_time
+        return int(self.Magazine_time)
 
     def set_book_time(self, book_time):
         self.book_time = book_time

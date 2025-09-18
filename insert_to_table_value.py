@@ -30,8 +30,12 @@ VALUES (1, 'USER')
 
 # insert example into borrowed_book
 cursor.execute('''
-INSERT INTO borrowed_book (Exist_Books_id, id_user, Date_to_take)
-VALUES (1, 1, '2025-09-07')
+INSERT INTO borrowed_book (Exist_Books_id, id_user, Date_to_take,pay)
+VALUES (1, 1, '2025-09-07','okey')
+''')
+cursor.execute('''
+INSERT INTO borrowed_book (Exist_Books_id, id_user, Date_to_take,pay)
+VALUES (2, 2, '2025-09-07','okey')
 ''')
 
 conect_db.commit()
